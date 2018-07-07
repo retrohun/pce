@@ -28,6 +28,7 @@
 #include <drivers/block/blkpsi.h>
 #include <drivers/block/blkqed.h>
 #include <drivers/block/blkraw.h>
+#include <drivers/block/blkmakea.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -740,6 +741,10 @@ int dsk_guess_geometry (disk_t *dsk)
 disk_t *dsk_auto_open (const char *fname, uint64_t ofs, int ro)
 {
 	unsigned type;
+
+	if (dsk_makeab_probe (fname)) {
+		return (dsk_makeab_open (fname, ro));
+	}
 
 	if (dsk_pbi_probe (fname)) {
 		return (dsk_pbi_open (fname, ro));

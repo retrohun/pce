@@ -36,6 +36,7 @@
 #include <drivers/block/blkpsi.h>
 #include <drivers/block/blkqed.h>
 #include <drivers/block/blkdosem.h>
+#include <drivers/block/blkmakea.h>
 
 #include <drivers/psi/psi-img.h>
 
@@ -87,7 +88,7 @@ void print_help (void)
 		"  info     Show information about images\n"
 		"  rebase   Rebase images\n"
 		"\nformats:\n"
-		"  dosemu, img, pbi, pimg, psi, qed\n",
+		"  dosemu, img, makeab, pbi, pimg, psi, qed\n",
 		stdout
 	);
 
@@ -150,6 +151,9 @@ const char *pce_get_type_name (unsigned type)
 
 	case PCE_DISK_PBI:
 		return ("pbi");
+
+	case PCE_DISK_MAKEAB:
+		return ("makeab");
 	}
 
 	return ("unknown");
@@ -180,6 +184,10 @@ unsigned pce_get_type (const char *str)
 
 	if (strcmp (str, "psi") == 0) {
 		return (DSK_PSI);
+	}
+
+	if (strcmp (str, "makeab") == 0) {
+		return (DSK_MAKEAB);
 	}
 
 	return (DSK_NONE);
@@ -214,6 +222,9 @@ unsigned pce_get_type_ext (const char *str, unsigned type)
 
 	if (strcasecmp (ext, "cow") == 0) {
 		ret = DSK_PBI;
+	}
+	else if (strcasecmp (ext, "makeab") == 0) {
+		ret = DSK_MAKEAB;
 	}
 	else {
 		ret = pce_get_type (ext);
@@ -543,6 +554,10 @@ int dsk_create (const char *name, unsigned type)
 		r = dsk_psi_create (name, PSI_FORMAT_NONE, par_c, par_h, par_s);
 		break;
 
+	case DSK_MAKEAB:
+		r = dsk_makeab_create (name, par_n, par_c, par_h, par_s);
+		break;
+
 	default:
 		r = dsk_pce_create (name, par_n, par_c, par_h, par_s, par_ofs & 0xffffffff);
 		break;
@@ -581,6 +596,10 @@ disk_t *dsk_open (const char *name, unsigned type, int ro)
 
 	case DSK_PSI:
 		dsk = dsk_psi_open (name, PSI_FORMAT_NONE, ro);
+		break;
+
+	case DSK_MAKEAB:
+		dsk = dsk_makeab_open (name, ro);
 		break;
 
 	default:
