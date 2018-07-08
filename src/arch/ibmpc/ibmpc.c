@@ -75,6 +75,9 @@
 
 #define PCE_IBMPC_SLEEP 25000
 
+#ifndef CAS_SRATE
+#define CAS_SRATE 44100
+#endif
 
 static char *par_intlog[256];
 
@@ -790,7 +793,7 @@ void pc_setup_cassette (ibmpc_t *pc, ini_sct_t *ini)
 {
 	const char    *fname;
 	const char    *mode;
-	unsigned long pos;
+	unsigned long pos, pcmfreq;
 	int           enable, append, pcm, filter;
 	ini_sct_t     *sct;
 
@@ -815,6 +818,7 @@ void pc_setup_cassette (ibmpc_t *pc, ini_sct_t *ini)
 	ini_get_string (sct, "file", &fname, NULL);
 	ini_get_string (sct, "mode", &mode, "load");
 	ini_get_uint32 (sct, "position", &pos, 0);
+	ini_get_uint32 (sct, "pcmfreq", &pcmfreq, 0);
 	ini_get_bool (sct, "append", &append, 0);
 	ini_get_bool (sct, "filter", &filter, 1);
 
@@ -823,9 +827,9 @@ void pc_setup_cassette (ibmpc_t *pc, ini_sct_t *ini)
 	}
 
 	pce_log_tag (MSG_INF, "CASSETTE:",
-		"file=%s mode=%s pcm=%d filter=%d pos=%lu append=%d\n",
+		"file=%s mode=%s pcm=%d frequency=%lu filter=%d pos=%lu append=%d\n",
 		(fname != NULL) ? fname : "<none>",
-		mode, pcm, filter, pos, append
+		mode, pcm, pcmfreq, filter, pos, append
 	);
 
 	pc->cas = pc_cas_new();
@@ -861,6 +865,14 @@ void pc_setup_cassette (ibmpc_t *pc, ini_sct_t *ini)
 	}
 
 	pc_cas_set_filter (pc->cas, filter);
+
+	if (pcmfreq) {
+		pc_cas_set_pcmfreq (pc->cas, pcmfreq);
+	}
+	else {
+		pcmfreq = CAS_SRATE;
+		pc_cas_set_pcmfreq (pc->cas, pcmfreq);
+	}
 }
 
 static

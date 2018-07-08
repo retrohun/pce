@@ -31,7 +31,9 @@
 
 
 #define CAS_CLK     1193182
+#ifndef CAS_SRATE
 #define CAS_SRATE   44100
+#endif
 #define CAS_IIR_MUL 16384
 
 
@@ -42,6 +44,7 @@ void pc_cas_init (pc_cassette_t *cas)
 {
 	cas->save = 0;
 	cas->pcm = 0;
+	cas->pcmfreq = CAS_SRATE;
 	cas->filter = 0;
 
 	cas->motor = 0;
@@ -247,8 +250,8 @@ void pc_cas_reset (pc_cassette_t *cas)
 	cas->cas_inp_buf = 0;
 	cas->cas_inp_bit = 0;
 
-	pc_cas_iir2_set_lowpass (&cas->pcm_out_iir, 3000, CAS_SRATE);
-	pc_cas_iir2_set_lowpass (&cas->pcm_inp_iir, 3000, CAS_SRATE);
+	pc_cas_iir2_set_lowpass (&cas->pcm_out_iir, 3000, cas->pcmfreq);
+	pc_cas_iir2_set_lowpass (&cas->pcm_inp_iir, 3000, cas->pcmfreq);
 }
 
 int pc_cas_get_mode (pc_cassette_t *cas)
@@ -292,6 +295,13 @@ int pc_cas_get_pcm (pc_cassette_t *cas)
 void pc_cas_set_pcm (pc_cassette_t *cas, int pcm)
 {
 	cas->pcm = (pcm != 0);
+
+	pc_cas_reset (cas);
+}
+
+void pc_cas_set_pcmfreq (pc_cassette_t *cas, unsigned long pcmfreq)
+{
+	cas->pcmfreq = pcmfreq;
 
 	pc_cas_reset (cas);
 }
@@ -559,7 +569,7 @@ void pc_cas_clock_pcm (pc_cassette_t *cas, unsigned long cnt)
 	unsigned long i, n;
 	int           v;
 
-	n = CAS_SRATE * cnt + cas->clk_pcm;
+	n = cas->pcmfreq * cnt + cas->clk_pcm;
 
 	cas->clk_pcm = n % CAS_CLK;
 
@@ -583,6 +593,7 @@ void pc_cas_clock_pcm (pc_cassette_t *cas, unsigned long cnt)
 			v = pc_cas_read_smp (cas);
 		}
 
+		/* TODO: handling both signed and unsigned tape samples */
 		cas->data_inp = (v < 0) ? 0 : 1;
 	}
 }

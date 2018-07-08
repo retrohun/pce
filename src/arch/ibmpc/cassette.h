@@ -40,6 +40,8 @@ typedef struct {
 	char          pcm;
 	char          filter;
 
+	unsigned long pcmfreq;
+
 	unsigned char motor;
 
 	unsigned long position;
@@ -113,9 +115,17 @@ int pc_cas_get_pcm (pc_cassette_t *cas);
 void pc_cas_set_pcm (pc_cassette_t *cas, int pcm);
 
 /*!***************************************************************************
+ * @short Set the cassette pcm frequency
+ * @param pcmfreq is the pcm stream frequency
+ *****************************************************************************/
+
+void pc_cas_set_pcmfreq (pc_cassette_t *cas, unsigned long pcmfreq);
+
+/*!***************************************************************************
  * @short  Get the cassette pcm filter mode
  * @return True if in filtered pcm mode, false if in raw pcm mode
  *****************************************************************************/
+
 int pc_cas_get_filter (pc_cassette_t *cas);
 
 /*!***************************************************************************

@@ -439,6 +439,26 @@ int pc_set_msg_emu_tape_pcm (ibmpc_t *pc, const char *msg, const char *val)
 }
 
 static
+int pc_set_msg_emu_tape_pcmfreq (ibmpc_t *pc, const char *msg, const char *val)
+{
+	int pcmfreq;
+
+	if (pc->cas == NULL) {
+		return (1);
+	}
+
+	if (msg_get_uint (val, &pcmfreq)) {
+		return (1);
+	}
+
+	pc_cas_set_pcm (pc->cas, pcmfreq);
+
+	pc_cas_print_state (pc->cas);
+
+	return (0);
+}
+
+static
 int pc_set_msg_emu_tape_read (ibmpc_t *pc, const char *msg, const char *val)
 {
 	if (pc->cas == NULL) {
@@ -568,6 +588,7 @@ static pc_msg_list_t set_msg_list[] = {
 	{ "emu.tape.append", pc_set_msg_emu_tape_append },
 	{ "emu.tape.filter", pc_set_msg_emu_tape_filter },
 	{ "emu.tape.file", pc_set_msg_emu_tape_file },
+	{ "emu.tape.pcmfreq", pc_set_msg_emu_tape_pcmfreq },
 	{ "emu.tape.load", pc_set_msg_emu_tape_load },
 	{ "emu.tape.pcm", pc_set_msg_emu_tape_pcm },
 	{ "emu.tape.read", pc_set_msg_emu_tape_read },

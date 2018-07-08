@@ -810,6 +810,7 @@ void pc_cmd_hm (cmd_t *cmd)
 		"\n"
 		"emu.tape.append\n"
 		"emu.tape.file        <filename>\n"
+		"emu.tape.pcmfreq     <frequency>\n"
 		"emu.tape.load        [<position> | \"end\"]\n"
 		"emu.tape.read        <filename>\n"
 		"emu.tape.rewind\n"
