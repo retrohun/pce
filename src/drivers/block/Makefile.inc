@@ -8,6 +8,7 @@ DIST += $(rel)/Makefile.inc
 DRV_BLK_BAS := \
 	blkcow \
 	blkdosem \
+	blkmakea \
 	blkpart \
 	blkpbi \
 	blkpce \
@@ -27,6 +28,7 @@ DIST += $(DRV_BLK_SRC) $(DRV_BLK_HDR)
 
 $(rel)/blkcow.o:	$(rel)/blkcow.c
 $(rel)/blkdosem.o:	$(rel)/blkdosem.c
+$(rel)/blkmakea.o:	$(rel)/blkmakea.c
 $(rel)/blkpart.o:	$(rel)/blkpart.c
 $(rel)/blkpbi.o:	$(rel)/blkpbi.c
 $(rel)/blkpce.o:	$(rel)/blkpce.c
