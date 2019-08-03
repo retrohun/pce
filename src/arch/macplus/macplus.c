@@ -1342,6 +1342,12 @@ void mac_free (macplus_t *sim)
 			sim->rtc_fname
 		);
 	}
+	else
+	{
+		pce_log_tag (MSG_INF, "RTC:", "writing rtc file succeded (%s)\n",
+			sim->rtc_fname
+		);
+	}
 
 	free (sim->rtc_fname);
 

@@ -139,6 +139,10 @@ void sig_segv (int s)
 
 void sig_term (int s)
 {
+	if (par_sim != NULL) {
+		mac_del (par_sim);
+	}
+
 	pce_set_fd_interactive (0, 1);
 
 	fprintf (stderr, "pce-macplus: signal %d\n", s);
